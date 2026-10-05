@@ -7,9 +7,10 @@ make 15-minute instrumental songs and string them into 1–3 hour videos.
 - **Original.** Every note is composed by the engine from a style recipe plus a random
   seed. Nothing is sampled from other people's music.
 - **Synced through GitHub.** Code, styles and notes live in this repo, so the Mac and the PC
-  share them. Big audio files stay out of git. Any machine can re-render a song exactly
-  from its style + seed, or you can sync `output/` with Google Drive, iCloud or OneDrive.
-- **Repeatable.** Same style + same seed + same engine version gives identical audio.
+  share them. Big audio files stay out of git. Any machine can re-render a song from its
+  style + seed, or you can sync `output/` with Google Drive, iCloud or OneDrive.
+- **Repeatable.** Same style + same seed + same engine version gives the same song (same notes,
+  chords and mix) on any machine.
 
 ## Quick start
 

@@ -1,6 +1,6 @@
 """Turn a style file plus a seed into one finished, mastered song.
 
-Same style + same seed + same engine version = the exact same audio, on any machine.
+Same style + same seed + same engine version = the same song (notes, chords, mix) on any machine.
 """
 from __future__ import annotations
 

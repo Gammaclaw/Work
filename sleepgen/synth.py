@@ -1,7 +1,7 @@
 """Instruments: slowly shimmering additive pads and soft mallet / felt-piano notes.
 
-Plain numpy, no plugins or GPU, so the same code (and the same audio for a given
-seed) runs on a Mac or a Windows PC.
+Plain numpy, no plugins or GPU, so the same code runs on a Mac or a Windows PC and a
+seed gives the same song on both.
 """
 from __future__ import annotations
 
