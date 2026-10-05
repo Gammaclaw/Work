@@ -27,7 +27,7 @@ pad:
   reverb_send: 0.55
 
 drone:
-  gain_db: -8
+  gain_db: -14             # owner: hum was too strong at -8
   follow: tonic           # one unbroken low note under everything
   octave: 2
 

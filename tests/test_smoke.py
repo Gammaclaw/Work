@@ -26,3 +26,11 @@ def test_same_seed_same_song():
     a, _, _ = render_song(style, minutes=0.5, seed=3, log=lambda *_: None)
     b, _, _ = render_song(style, minutes=0.5, seed=3, log=lambda *_: None)
     assert np.array_equal(a, b)
+
+
+def test_set_overrides_nested_values():
+    from sleepgen.__main__ import apply_overrides
+
+    style = {"drone": {"gain_db": -8}}
+    apply_overrides(style, ["drone.gain_db=-20", "texture.type=none", "key=[A, C]"])
+    assert style == {"drone": {"gain_db": -20}, "texture": {"type": "none"}, "key": ["A", "C"]}

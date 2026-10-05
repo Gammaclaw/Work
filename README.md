@@ -7,12 +7,22 @@ make 15-minute instrumental songs and string them into 1–3 hour videos.
 - **Original.** Every note is composed by the engine from a style recipe plus a random
   seed. Nothing is sampled from other people's music.
 - **Synced through GitHub.** Code, styles and notes live in this repo, so the Mac and the PC
-  share them. Big audio files stay out of git. Any machine can re-render a song from its
-  style + seed, or you can sync `output/` with Google Drive, iCloud or OneDrive.
+  share them. Big audio files stay out of git and go to Google Drive instead (see below).
+  Any machine can also re-render a song from its style + seed.
 - **Repeatable.** Same style + same seed + same engine version gives the same song (same notes,
   chords and mix) on any machine.
 
 ## Quick start
+
+**Windows** (the main machine). Run this in PowerShell:
+
+```powershell
+winget install Python.Python.3.12 Gyan.FFmpeg Git.Git
+git clone https://github.com/Gammaclaw/Work.git; cd Work
+py -m venv .venv; .venv\Scripts\Activate.ps1   # if blocked: Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+pip install -r requirements.txt
+python -m sleepgen render styles/ocean_night.yaml --minutes 3 --mp3
+```
 
 **Mac** (install [Homebrew](https://brew.sh) first):
 
@@ -21,35 +31,42 @@ brew install python ffmpeg git
 git clone https://github.com/Gammaclaw/Work.git && cd Work
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-python -m sleepgen render styles/warm_drift.yaml --minutes 3 --mp3
+python -m sleepgen render styles/ocean_night.yaml --minutes 3 --mp3
 ```
 
-**Windows** (PowerShell):
-
-```powershell
-winget install Python.Python.3.12 Gyan.FFmpeg Git.Git
-git clone https://github.com/Gammaclaw/Work.git; cd Work
-py -m venv .venv; .venv\Scripts\Activate.ps1   # if blocked: Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-pip install -r requirements.txt
-python -m sleepgen render styles/warm_drift.yaml --minutes 3 --mp3
-```
-
-Each render writes to `output/songs/`:
+Each render writes three files to `output/songs/`, or to Google Drive once that's set up (below):
 
 - a 24-bit WAV (master quality)
 - an MP3 for listening
 - a JSON with the key, chords and seed
 
+## Save renders to Google Drive
+
+Renders are big (about 260 MB per 15-minute WAV), so they live in Google Drive rather than git.
+The folder `My Drive/Sleep Music Studio` already exists.
+
+1. Install [Google Drive for Desktop](https://www.google.com/drive/download/) on each machine and sign in.
+2. Point sleepgen at the folder once per machine, then open a new terminal:
+   - **Windows:** `setx SLEEPGEN_OUTPUT "G:\My Drive\Sleep Music Studio"` (use your Drive's letter if it isn't G:)
+   - **Mac:** `echo 'export SLEEPGEN_OUTPUT="$HOME/Library/CloudStorage/GoogleDrive-<your Google email>/My Drive/Sleep Music Studio"' >> ~/.zshrc`
+
+From then on every render lands in `Sleep Music Studio/songs/` and shows up on both machines and
+on your phone. Pass `--out` to send a single render somewhere else.
+
 ## Commands
 
 ```text
-python -m sleepgen render STYLE.yaml [--minutes 15] [--seed N] [--mp3] [--report] [--out DIR]
+python -m sleepgen render STYLE.yaml [--minutes 15] [--seed N] [--mp3] [--report]
+                                     [--set KEY=VALUE ...] [--tag LABEL] [--out DIR]
 python -m sleepgen analyze FILE.wav [--png picture.png]
 ```
 
 - `--seed`: the same seed always gives the same song. Leave it out to get a new song; the seed
   it used is printed and saved in the JSON.
 - `--report`: saves a spectrogram and loudness picture. This is how Claude checks a render, since it can't hear audio.
+- `--set` / `--tag`: try a change without editing the style file, for A/B comparisons. For example,
+  `--set drone.gain_db=-20 --tag hum-faint` renders the same song with a quieter hum and adds
+  `_hum-faint` to the file name.
 
 ## Styles
 

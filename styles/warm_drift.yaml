@@ -27,7 +27,7 @@ pad:
   reverb_send: 0.45
 
 drone:
-  gain_db: -6
+  gain_db: -12             # owner: hum was too strong at -6
   follow: root
   octave: 2
   reverb_send: 0.1

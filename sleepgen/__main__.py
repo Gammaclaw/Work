@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -11,6 +12,7 @@ from pathlib import Path
 
 import numpy as np
 import soundfile as sf
+import yaml
 
 from .analyze import analyze
 from .song import load_style, render_song
@@ -18,6 +20,24 @@ from .song import load_style, render_song
 
 def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+def output_root() -> Path:
+    """Where renders go: $SLEEPGEN_OUTPUT (e.g. a Google Drive folder) or ./output."""
+    return Path(os.environ.get("SLEEPGEN_OUTPUT") or "output")
+
+
+def apply_overrides(style: dict, overrides: list[str]) -> None:
+    """Apply --set changes like `drone.gain_db=-20` (values are read as YAML)."""
+    for item in overrides:
+        path, sep, raw = item.partition("=")
+        if not sep or not path:
+            raise SystemExit(f"--set needs key=value, got {item!r}")
+        *parents, leaf = path.strip().split(".")
+        node = style
+        for key in parents:
+            node = node.setdefault(key, {})
+        node[leaf] = yaml.safe_load(raw)
 
 
 def to_mp3(wav: Path, bitrate: str = "192k") -> Path | None:
@@ -32,11 +52,14 @@ def to_mp3(wav: Path, bitrate: str = "192k") -> Path | None:
 
 def cmd_render(args: argparse.Namespace) -> None:
     style = load_style(args.style)
+    apply_overrides(style, args.set)
     seed = args.seed if args.seed is not None else int(np.random.default_rng().integers(1, 1_000_000))
     audio, sr, info = render_song(style, args.minutes, seed)
-    out = Path(args.out)
+    if args.set:
+        info["overrides"] = args.set
+    out = Path(args.out) if args.out else output_root() / "songs"
     out.mkdir(parents=True, exist_ok=True)
-    stem = f"{_slug(style['name'])}_{seed}_{args.minutes:g}m"
+    stem = f"{_slug(style['name'])}_{seed}_{args.minutes:g}m" + (f"_{_slug(args.tag)}" if args.tag else "")
     wav = out / f"{stem}.wav"
     sf.write(str(wav), audio, sr, subtype="PCM_24")
     info["files"] = {"wav": str(wav)}
@@ -61,7 +84,10 @@ def main(argv: list[str] | None = None) -> None:
     r.add_argument("style", help="path to a style .yaml file")
     r.add_argument("--minutes", type=float, default=15.0, help="song length (default 15)")
     r.add_argument("--seed", type=int, help="random seed; the same seed always gives the same song")
-    r.add_argument("--out", default="output/songs", help="output folder (default output/songs)")
+    r.add_argument("--out", help="output folder (default: $SLEEPGEN_OUTPUT/songs, else output/songs)")
+    r.add_argument("--set", action="append", default=[], metavar="KEY=VALUE",
+                   help="override a style setting for this render, e.g. --set drone.gain_db=-20 (repeatable)")
+    r.add_argument("--tag", help="label added to the file name, e.g. --tag hum-low")
     r.add_argument("--mp3", action="store_true", help="also write an MP3 for easy listening")
     r.add_argument("--report", action="store_true", help="also write a loudness/spectrogram PNG")
     r.set_defaults(func=cmd_render)

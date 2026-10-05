@@ -10,6 +10,18 @@ Feedback on renders, newest first. Each entry records:
 Any render can be recreated with
 `python -m sleepgen render styles/<style>.yaml --seed <seed> --minutes <length> --mp3`.
 
+## 2026-10-05: first feedback
+
+- **Favourite: Ocean Night**, especially the waves. This is the lead direction for the channel.
+- **The hum (low drone) was too strong** in Warm Drift and Ocean Night.
+  - Warm Drift's drone went from -6 to -12 dB.
+  - Ocean Night's drone went from -8 to -14 dB.
+- **A/B sent, same seed 11, 3 minutes.** The hum's share of the total sound energy:
+  - the original: 26%
+  - `hum-soft` (-14, the new default): 10%
+  - `hum-faint` (`--set drone.gain_db=-20`): 5%
+- Choice between soft and faint: *pending*. More feedback is coming after re-listening.
+
 ## 2026-10-05: first sketches (engine v0.1.0)
 
 Renders (3-minute previews, seed 11):
