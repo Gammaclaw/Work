@@ -1,0 +1,70 @@
+# Rain Cabin: a soft felt piano in a small warm room, quiet pads, steady rain.
+name: Rain Cabin
+description: >-
+  A soft felt piano playing slow, simple phrases in a small warm room, quiet pads
+  underneath, and steady rain on the roof.
+
+key: [C, F, G]
+mode: ionian              # plain major
+arc: arch
+tempo: 60                 # shared beat: chords, left hand and melody play in time
+
+chords:
+  seconds: [16, 24]
+  cycle_length: 4
+  colors: {add9: 3, seventh: 3, triad: 2, sus2: 1}
+  variation: 0.2
+
+pad:
+  gain_db: -8
+  voices: 4
+  range: [50, 74]
+  brightness: 0.35
+  unison: 2
+  detune_cents: 5
+  attack: 6
+  release: 8
+  shimmer: 0.25
+  reverb_send: 0.35
+
+drone:
+  gain_db: -12
+  follow: root
+  octave: 2
+
+arpeggio:                 # slow left-hand broken chords
+  instrument: felt_piano
+  gain_db: -3
+  range: [43, 72]
+  pattern: [0, 1, 2, 3, 2, 1]
+  beats_per_note: 1
+  velocity: 0.42
+  echo: {seconds: 1.0, feedback: 0.2, mix: 0.12}
+  reverb_send: 0.5
+
+melody:
+  instrument: felt_piano
+  gain_db: 0
+  range: [64, 86]
+  density: 0.6
+  velocity: 0.6
+  rest_seconds: [6, 16]
+  echo: {seconds: 0.72, feedback: 0.25, mix: 0.18}
+  reverb_send: 0.6
+
+texture:
+  type: rain
+  gain_db: -9
+  density: 0.5
+  reverb_send: 0.02
+
+reverb:
+  seconds: 4.5
+  damping: 0.5
+  wet_db: -4
+
+master:
+  lufs: -18
+  lowpass_hz: 9000
+  fade_in: 10
+  fade_out: 25

@@ -1,0 +1,59 @@
+# Ocean Night: dark minor drones, muted pads, rare glass notes and rolling waves.
+name: Ocean Night
+description: >-
+  Deep and dark: a low minor drone, slow muted pads, rare glassy notes and the
+  sound of waves rolling in and washing out.
+
+key: [A, B, C]
+mode: aeolian             # natural minor
+arc: descend              # keeps sinking toward stillness
+
+chords:
+  seconds: [26, 40]
+  cycle_length: 4
+  colors: {add9: 2, seventh: 2, sus2: 2, triad: 1}
+  variation: 0.25
+
+pad:
+  gain_db: 0
+  voices: 4
+  range: [48, 74]
+  brightness: 0.3
+  unison: 3
+  detune_cents: 9
+  attack: 10
+  release: 12
+  shimmer: 0.3
+  reverb_send: 0.55
+
+drone:
+  gain_db: -8
+  follow: tonic           # one unbroken low note under everything
+  octave: 2
+
+melody:
+  instrument: glass
+  gain_db: -8
+  range: [67, 88]
+  tempo: 48
+  density: 0.45
+  velocity: 0.45
+  rest_seconds: [10, 30]
+  echo: {seconds: 1.1, feedback: 0.45, mix: 0.35}
+  reverb_send: 1.0
+
+texture:
+  type: ocean
+  gain_db: -7
+  reverb_send: 0.05
+
+reverb:
+  seconds: 9
+  damping: 0.65
+  wet_db: -1
+
+master:
+  lufs: -19
+  lowpass_hz: 7000
+  fade_in: 15
+  fade_out: 30

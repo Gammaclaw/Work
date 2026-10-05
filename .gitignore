@@ -1,0 +1,19 @@
+# Rendered audio/video lives outside git (too big). Re-render from style + seed,
+# or sync the output folder with Google Drive / iCloud / OneDrive.
+output/
+*.wav
+*.mp3
+*.flac
+*.m4a
+*.mp4
+*.mov
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS clutter
+.DS_Store
+Thumbs.db

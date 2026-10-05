@@ -1,0 +1,60 @@
+# Warm Drift: floating major-key pads, a soft drone, and a distant felt piano.
+name: Warm Drift
+description: >-
+  Slow, warm pads drifting between soft major chords, a low drone underneath and
+  an occasional felt-piano phrase far back in the reverb, over a faint brown-noise bed.
+
+key: [D, Eb, E, F]        # one is picked per song
+mode: lydian              # dreamy major colour
+arc: arch                 # energy: rise, bloom, settle
+
+chords:
+  seconds: [22, 32]       # how long each chord lasts
+  cycle_length: 4
+  colors: {add9: 3, seventh: 3, sus2: 1, triad: 1}
+  variation: 0.3
+
+pad:
+  gain_db: 0
+  voices: 4
+  range: [52, 79]
+  brightness: 0.5
+  unison: 3
+  detune_cents: 7
+  attack: 7
+  release: 9
+  shimmer: 0.35
+  reverb_send: 0.45
+
+drone:
+  gain_db: -6
+  follow: root
+  octave: 2
+  reverb_send: 0.1
+
+melody:
+  instrument: felt_piano
+  gain_db: -2
+  range: [62, 86]
+  tempo: 56
+  density: 0.55
+  velocity: 0.55
+  rest_seconds: [8, 22]
+  echo: {seconds: 0.8, feedback: 0.35, mix: 0.3}
+  reverb_send: 0.85
+
+texture:
+  type: brown
+  gain_db: -17
+  reverb_send: 0
+
+reverb:
+  seconds: 7
+  damping: 0.55
+  wet_db: -2
+
+master:
+  lufs: -18
+  lowpass_hz: 9500
+  fade_in: 12
+  fade_out: 25
