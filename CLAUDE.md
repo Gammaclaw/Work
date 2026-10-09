@@ -35,6 +35,9 @@ GitHub repo is the sync point between them. See README.md for setup and the road
 - Claude can't hear audio. Check each render with its `--report` PNG (spectrogram and level
   over time) and its JSON (key, chords, note counts), then ask the owner to listen.
 - Log the owner's listening feedback in `docs/listening-log.md`, and read it before tuning a style.
+- To try an idea, make a take: a style with `extends: <base>` that lists only the change. Render it
+  with the same seed as the base (every part has its own random stream), so the owner hears only
+  the change. Use `--set` / `--tag` for quick one-off variants.
 - Run `pytest` (the smoke test renders every style briefly) before pushing engine changes.
 - Higgsfield MCP cannot generate music (speech only). Use it for visuals: backgrounds, loops,
   thumbnails. Use VidIQ for competitor and keyword research.
@@ -46,7 +49,7 @@ GitHub repo is the sync point between them. See README.md for setup and the road
 | `sleepgen/theory.py` | Modes, soft chords, voice leading |
 | `sleepgen/compose.py` | Energy arc, chord timeline (AABA cycles), motifs, arpeggios |
 | `sleepgen/synth.py` | Additive pads, felt piano and glass instruments |
-| `sleepgen/textures.py` | Brown noise, ocean, rain |
+| `sleepgen/textures.py` | Brown noise, ocean, rain, whale calls |
 | `sleepgen/effects.py` | Filters, echo, reverb, loudness, mastering |
 | `sleepgen/song.py` | Style + seed to a mixed, mastered song |
 | `sleepgen/analyze.py` | Loudness and spectrogram report |

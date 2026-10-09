@@ -1,0 +1,16 @@
+# Take: Ocean Night with a soft felt piano in place of the glass notes.
+extends: ocean_night
+name: Ocean Night - Moonlit Piano
+description: >-
+  Ocean Night's waves, pads and faint hum, with slow felt-piano phrases instead of the
+  glass notes.
+
+melody:
+  instrument: felt_piano
+  gain_db: -4
+  range: [57, 81]
+  density: 0.85
+  velocity: 0.5
+  rest_seconds: [5, 14]
+  echo: {seconds: 0.9, feedback: 0.35, mix: 0.3}
+  reverb_send: 0.9

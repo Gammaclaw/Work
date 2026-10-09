@@ -10,6 +10,24 @@ Feedback on renders, newest first. Each entry records:
 Any render can be recreated with
 `python -m sleepgen render styles/<style>.yaml --seed <seed> --minutes <length> --mp3`.
 
+## 2026-10-09: hum chosen, round 2 takes (engine v0.2.0)
+
+- **Hum:** the owner picked `hum-faint`, so Ocean Night's drone is now -20 dB by default.
+- **Engine v0.2.0:** every part has its own random stream. v0.1 renders (seed 11 and the
+  15-minute Warm Drift) now need the v0.1 commit (`f05aadb`) to reproduce exactly.
+- **Round 2: three takes on Ocean Night**, all seed 21 and 3 minutes, in C aeolian
+  (Cm7, Ebmaj7, Bbadd9, Fm, Cm7):
+  - `ocean_night`: the base, with the faint hum and 7 glass notes.
+  - `ocean_night_piano` (Moonlit Piano): 20 soft felt-piano notes replace the glass. Same chords
+    and waves as the base.
+  - `ocean_night_drift` (Deep Drift): chords hold 42–64 s (4 chords), darker pads, waves
+    +3 dB, 11 s reverb, 1 dB quieter overall.
+  - `ocean_night_whales` (Whale Song): the base plus whale calls, about 8 dB under the mix while
+    calling. Same chords, glass notes and waves as the base.
+- **Fixed before sending:** Deep Drift's pads were first moved lower, which made a low voice
+  throb about 1.5 times a second. They went back to the base register with a narrower detune.
+- Feedback: *pending*.
+
 ## 2026-10-05: first feedback
 
 - **Favourite: Ocean Night**, especially the waves. This is the lead direction for the channel.
@@ -20,7 +38,7 @@ Any render can be recreated with
   - the original: 26%
   - `hum-soft` (-14, the new default): 10%
   - `hum-faint` (`--set drone.gain_db=-20`): 5%
-- Choice between soft and faint: *pending*. More feedback is coming after re-listening.
+- Choice between soft and faint: **faint** (decided 2026-10-09).
 
 ## 2026-10-05: first sketches (engine v0.1.0)
 

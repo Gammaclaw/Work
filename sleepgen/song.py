@@ -5,6 +5,7 @@ Same style + same seed + same engine version = the same song (notes, chords, mix
 from __future__ import annotations
 
 import time
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -14,16 +15,34 @@ from . import __version__
 from .compose import chord_timeline, compose_arpeggio, compose_melody, intensity_arc
 from .effects import echo, loudness, master, reverb, reverb_ir
 from .synth import HOP, midi_to_hz, mallet_note, pad_note, swell
-from .textures import TEXTURES
-from .theory import Chord, parse_key, parse_mode, voice_chord
+from .textures import TEXTURES, whale_song
+from .theory import MELODY_DEGREES, MODES, Chord, parse_key, parse_mode, voice_chord
 
 LAYER_REFERENCE_LUFS = -26.0  # where a layer with gain_db 0 sits before reverb and mastering
 
 
-def load_style(path: str | Path) -> dict:
+def _merge(base: dict, over: dict) -> dict:
+    """Deep-merge style settings: nested sections merge, everything else is replaced."""
+    out = dict(base)
+    for key, value in over.items():
+        out[key] = _merge(out[key], value) if isinstance(value, dict) and isinstance(out.get(key), dict) else value
+    return out
+
+
+def load_style(path: str | Path, _chain: tuple = ()) -> dict:
+    """Load a style. `extends: other_style` starts from that style and changes only what's listed."""
+    path = Path(path)
+    if path.resolve() in _chain:
+        raise ValueError(f"style {path} extends itself")
     with open(path, encoding="utf-8") as f:
         style = yaml.safe_load(f) or {}
-    style.setdefault("name", Path(path).stem)
+    if style.get("extends"):
+        parent = path.parent / str(style.pop("extends"))
+        base = load_style(parent if parent.suffix else parent.with_suffix(".yaml"), _chain + (path.resolve(),))
+        for own in ("name", "description", "_file"):  # a take describes itself
+            base.pop(own, None)
+        style = _merge(base, style)
+    style.setdefault("name", path.stem)
     style["_file"] = str(path)
     return style
 
@@ -128,9 +147,26 @@ def render_notes(notes, sr, n, rng, cfg) -> np.ndarray:
     return bus
 
 
+def render_whales(tonic, mode, sr, n, rng, cfg) -> np.ndarray:
+    lo, hi = cfg.get("range", [45, 69])
+    allowed = {(tonic + MODES[mode][d]) % 12 for d in MELODY_DEGREES[mode]}
+    bus = whale_song(n, sr, rng, cfg, [m for m in range(lo, hi + 1) if m % 12 in allowed])
+    if cfg.get("echo"):
+        e = cfg["echo"]
+        bus = echo(bus, sr, float(e.get("seconds", 1.4)), float(e.get("feedback", 0.35)),
+                   float(e.get("mix", 0.3)), float(e.get("damp_hz", 1500)))
+    return bus
+
+
 def render_song(style: dict, minutes: float, seed: int, log=print) -> tuple[np.ndarray, int, dict]:
     started = time.time()
-    rng = np.random.default_rng(seed)
+
+    def stream(part: str) -> np.random.Generator:
+        """Each part has its own random stream, so changing one part never reshuffles the others
+        (a take that swaps the melody instrument keeps the same chords and the same waves)."""
+        return np.random.default_rng([seed, zlib.crc32(part.encode())])
+
+    rng = stream("song")
     sr = int(style.get("sample_rate", 48000))
     duration = float(minutes) * 60.0
     n = int(duration * sr)
@@ -168,24 +204,28 @@ def render_song(style: dict, minutes: float, seed: int, log=print) -> tuple[np.n
         log(f"  {name:<8} rendered ({time.time() - started:5.1f}s)")
 
     if style.get("pad"):
-        mix_in("pad", render_pad(chords, arc, sr, n, rng, style["pad"]), style["pad"], 0.5)
+        mix_in("pad", render_pad(chords, arc, sr, n, stream("pad"), style["pad"]), style["pad"], 0.5)
     if style.get("drone"):
-        mix_in("drone", render_drone(chords, tonic, sr, n, rng, style["drone"]), style["drone"], 0.1)
+        mix_in("drone", render_drone(chords, tonic, sr, n, stream("drone"), style["drone"]), style["drone"], 0.1)
     counts = {}
     if arp_cfg:
-        notes = compose_arpeggio(chords, duration, arc_at, rng, arp_cfg)
-        mix_in("arpeggio", render_notes(notes, sr, n, rng, arp_cfg), arp_cfg, 0.5)
+        part = stream("arpeggio")
+        notes = compose_arpeggio(chords, duration, arc_at, part, arp_cfg)
+        mix_in("arpeggio", render_notes(notes, sr, n, part, arp_cfg), arp_cfg, 0.5)
         counts["arpeggio"] = len(notes)
     if melody_cfg:
-        notes = compose_melody(chords, tonic, mode, duration, arc_at, rng, melody_cfg)
-        mix_in("melody", render_notes(notes, sr, n, rng, melody_cfg), melody_cfg, 0.8)
+        part = stream("melody")
+        notes = compose_melody(chords, tonic, mode, duration, arc_at, part, melody_cfg)
+        mix_in("melody", render_notes(notes, sr, n, part, melody_cfg), melody_cfg, 0.8)
         counts["melody"] = len(notes)
     texture = style.get("texture") or {}
     if texture.get("type", "none") != "none":
-        mix_in("texture", TEXTURES[texture["type"]](n, sr, rng, texture), texture, 0.0)
+        mix_in("texture", TEXTURES[texture["type"]](n, sr, stream("texture"), texture), texture, 0.0)
+    if style.get("whales"):
+        mix_in("whales", render_whales(tonic, mode, sr, n, stream("whales"), style["whales"]), style["whales"], 0.9)
 
     rv = style.get("reverb", {})
-    ir = reverb_ir(sr, float(rv.get("seconds", 6.0)), float(rv.get("damping", 0.5)), rng,
+    ir = reverb_ir(sr, float(rv.get("seconds", 6.0)), float(rv.get("damping", 0.5)), stream("reverb"),
                    float(rv.get("predelay", 0.025)))
     dry += reverb(send, ir) * 10 ** (float(rv.get("wet_db", -3.0)) / 20)
     del send

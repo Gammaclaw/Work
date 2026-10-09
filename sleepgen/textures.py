@@ -5,7 +5,7 @@ import numpy as np
 from scipy import signal
 
 from .effects import bandpass, highpass, lowpass, rms
-from .synth import HOP, pan_gains, slow_wander, upsample
+from .synth import HOP, midi_to_hz, pan_gains, slow_wander, upsample
 
 
 def brown(n: int, sr: int, rng: np.random.Generator, cfg: dict) -> np.ndarray:
@@ -70,6 +70,56 @@ def rain(n: int, sr: int, rng: np.random.Generator, cfg: dict) -> np.ndarray:
         drops[pos:pos + len(kernel), 1] += amp * right * kernel
     drops = lowpass(drops, 6000, sr)
     return bed + 0.3 * drops / rms(drops)
+
+
+def whale_call(f_start: float, f_end: float, seconds: float, sr: int, rng: np.random.Generator) -> np.ndarray:
+    """One moan: glides from f_start to f_end with a rise-and-fall arch, opening up in the middle."""
+    n = int(seconds * sr)
+    x = np.linspace(0.0, 1.0, n)
+    arch = np.sin(np.pi * x)
+    semis = (12 * np.log2(f_end / f_start) * (3 * x**2 - 2 * x**3)  # smooth glide between notes
+             + rng.uniform(1.0, 4.0) * arch**2  # the moan bends up and back down
+             + 0.15 * arch * np.sin(2 * np.pi * rng.uniform(2.0, 4.0) * x * seconds + rng.uniform(0, 2 * np.pi)))
+    phase = 2 * np.pi * np.cumsum(f_start * 2.0 ** (semis / 12)) / sr
+    opening = 0.35 + 0.65 * arch**1.5
+    sig = np.zeros(n)
+    for k in range(1, 7):
+        if f_start * k > 3000:
+            break
+        sig += k**-1.4 * opening ** (k - 1) * np.sin(k * phase + rng.uniform(0, 2 * np.pi))
+    sig += 0.06 * opening * lowpass(rng.standard_normal(n), 1200, sr)  # breath
+    if rng.random() < 0.3:  # some calls get a soft growl
+        sig *= 1.0 - 0.1 * (1 + np.sin(2 * np.pi * rng.uniform(25, 35) * x * seconds))
+    na, nr = int(min(0.8, 0.25 * seconds) * sr), int(min(1.5, 0.4 * seconds) * sr)
+    sig[:na] *= np.sin(0.5 * np.pi * np.arange(na) / na) ** 2
+    sig[-nr:] *= np.cos(0.5 * np.pi * np.arange(nr) / nr) ** 2
+    return (sig / np.max(np.abs(sig)) * rng.uniform(0.6, 1.0)).astype(np.float32)
+
+
+def whale_song(n: int, sr: int, rng: np.random.Generator, cfg: dict, pitches: list[int]) -> np.ndarray:
+    """Distant whales: phrases of one to three calls, each starting and ending on a note of the key."""
+    duration = n / sr
+    gap_lo, gap_hi = cfg.get("gap_seconds", [25, 60])
+    out = np.zeros((n, 2), dtype=np.float32)
+    t = min(float(cfg.get("first_call", 20.0)), duration * 0.15)
+    while t < duration - 12.0:
+        pan = rng.uniform(-0.7, 0.7)
+        note = int(rng.integers(0, len(pitches)))
+        for _ in range(int(rng.integers(1, 4))):
+            seconds = rng.uniform(2.5, 5.5)
+            if t + seconds > duration - 12.0:
+                break
+            nxt = int(np.clip(note + rng.choice([-2, -1, 1, 2]), 0, len(pitches) - 1))
+            call = whale_call(midi_to_hz(pitches[note]), midi_to_hz(pitches[nxt]), seconds, sr, rng)
+            s0 = int(t * sr)
+            length = min(len(call), n - s0)
+            left, right = pan_gains(pan + rng.uniform(-0.1, 0.1))
+            out[s0:s0 + length, 0] += left * call[:length]
+            out[s0:s0 + length, 1] += right * call[:length]
+            note = nxt
+            t += seconds + rng.uniform(0.6, 2.5)
+        t += rng.uniform(gap_lo, gap_hi)
+    return lowpass(out, float(cfg.get("lowpass_hz", 1800)), sr)  # far away, under water
 
 
 TEXTURES = {"brown": brown, "ocean": ocean, "rain": rain}

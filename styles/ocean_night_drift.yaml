@@ -1,0 +1,29 @@
+# Take: slower, darker and deeper. The waves come forward; the music becomes a soft bed.
+extends: ocean_night
+name: Ocean Night - Deep Drift
+description: >-
+  Slower and darker: chords hold for close to a minute, the pads sink lower, glass notes
+  are rare, and the waves move to the front.
+
+chords:
+  seconds: [42, 64]
+
+pad:
+  brightness: 0.2
+  attack: 14
+  release: 16
+  detune_cents: 6           # narrower detune: no slow throb from the low voices
+
+melody:
+  density: 0.3
+  rest_seconds: [16, 36]
+
+texture:
+  gain_db: -4
+
+reverb:
+  seconds: 11
+
+master:
+  lufs: -20
+  lowpass_hz: 6000

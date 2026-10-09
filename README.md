@@ -76,8 +76,16 @@ then composes fresh chords and melodies from its seed.
 | Style | Feel |
 |---|---|
 | `warm_drift` | Floating major-key pads, a low drone, a distant felt piano, faint brown noise |
-| `ocean_night` | Dark minor drone, muted pads, rare glass notes, rolling waves |
+| `ocean_night` | Muted minor pads, a faint low hum, rare glass notes, rolling waves (the lead style) |
+| `ocean_night_piano` | Take: Ocean Night with soft felt-piano phrases instead of the glass notes |
+| `ocean_night_drift` | Take: Ocean Night slower and darker, with the waves moved forward |
+| `ocean_night_whales` | Take: Ocean Night plus distant whale calls that glide between notes of the key |
 | `rain_cabin` | Felt piano (slow left-hand arpeggios and a simple melody), quiet pads, steady rain |
+
+**Takes.** A take starts with `extends: <style>` and lists only what it changes. Every part of a
+song (chords, pads, melody, waves, whales ...) has its own random stream, so a take rendered
+with the same seed as its base keeps everything it doesn't change identical. That makes A/B
+listening clean: the only difference you hear is the change.
 
 The main settings:
 
@@ -89,6 +97,7 @@ The main settings:
 | `pad.brightness` | How bright the pads sound |
 | `melody.density` | How often melodic phrases appear |
 | `texture.type` | `brown`, `ocean`, `rain` or `none` |
+| `whales` | Adds distant whale calls (`gain_db`, `range`, `gap_seconds`) |
 | `reverb.seconds` | How big the room sounds |
 | `master.lufs` | Final loudness |
 
@@ -97,7 +106,8 @@ The main settings:
 ```text
 style + seed
   -> composer: key, chords in AABA cycles, recurring melodic motifs, an energy arc
-  -> instruments: shimmering additive pads, drone, felt piano / glass, arpeggios, noise beds
+  -> instruments: shimmering additive pads, drone, felt piano / glass, arpeggios, noise beds,
+     whale calls
   -> mix: every layer set to a target loudness, ping-pong echo, synthetic hall reverb
   -> master: low cut, soft high roll-off, fades, final loudness (-18 LUFS by default)
 ```

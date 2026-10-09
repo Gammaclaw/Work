@@ -1,0 +1,13 @@
+# Take: Ocean Night exactly as it is, plus distant whale calls.
+extends: ocean_night
+name: Ocean Night - Whale Song
+description: >-
+  Ocean Night unchanged, plus whales calling far out in the water. Each call glides
+  between notes of the song's key, so it stays in tune with the music.
+
+whales:
+  gain_db: -7
+  range: [45, 69]           # notes the calls start and end on (110-440 Hz)
+  gap_seconds: [20, 45]     # quiet time between phrases
+  echo: {seconds: 1.4, feedback: 0.35, mix: 0.3}
+  reverb_send: 0.9

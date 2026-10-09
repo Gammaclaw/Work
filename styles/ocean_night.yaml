@@ -27,7 +27,7 @@ pad:
   reverb_send: 0.55
 
 drone:
-  gain_db: -14             # owner: hum was too strong at -8
+  gain_db: -20             # owner picked "hum faint" (was -8, then -14)
   follow: tonic           # one unbroken low note under everything
   octave: 2
 
