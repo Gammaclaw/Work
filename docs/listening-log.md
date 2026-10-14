@@ -10,6 +10,14 @@ Feedback on renders, newest first. Each entry records:
 Any render can be recreated with
 `python -m sleepgen render styles/<style>.yaml --seed <seed> --minutes <length> --mp3`.
 
+## 2026-10-14: Moonlit Piano chosen, first 15-minute render on the PC
+
+- **Pick:** the owner chose Moonlit Piano (`ocean_night_piano`) over Deep Drift and Whale Song.
+- **First PC render:** `ocean_night_piano`, seed 21, 15 minutes, C aeolian, 28 chords. Took
+  111 s on the PC (CPU only). -19.0 LUFS, peak -4.7 dBFS, level steady around -23 dB short-term
+  after the fade-in, with no spikes. Saved to `Sleep Music Studio/songs/` on Google Drive.
+- Feedback on the full 15-minute song: *pending*.
+
 ## 2026-10-09: hum chosen, round 2 takes (engine v0.2.0)
 
 - **Hum:** the owner picked `hum-faint`, so Ocean Night's drone is now -20 dB by default.
