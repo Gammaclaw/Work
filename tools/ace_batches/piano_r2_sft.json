@@ -1,0 +1,12 @@
+{
+  "model": "acestep-v15-sft",
+  "seconds": 120,
+  "bpm": 60,
+  "key": "C minor",
+  "steps": 50,
+  "guidance": 4.0,
+  "prompt": "very quiet minimal solo felt piano, pianissimo, single soft notes with long silences between them, slow, ambient sleep music, peaceful, dark and intimate, soft room reverb, no drums, no percussion, no bass, no beat, no crescendo, constant low volume",
+  "variants": [
+    {"name": "D-quality", "seed": 21}
+  ]
+}

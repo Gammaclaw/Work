@@ -1,0 +1,13 @@
+{
+  "model": "acestep-v15-turbo",
+  "lm": "acestep-5Hz-lm-1.7B",
+  "seconds": 120,
+  "bpm": 60,
+  "key": "C minor",
+  "prompt": "very quiet minimal solo felt piano, pianissimo, single soft notes with long silences between them, slow, ambient sleep music, peaceful, dark and intimate, soft room reverb, no drums, no percussion, no bass, no beat, no crescendo, constant low volume",
+  "variants": [
+    {"name": "A-strict", "seed": 21},
+    {"name": "B-strict-seed22", "seed": 22},
+    {"name": "C-planned", "seed": 21, "thinking": true}
+  ]
+}
