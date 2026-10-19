@@ -12,6 +12,7 @@ from .theory import CHORD_SHAPES, CHORD_WEIGHTS, MELODY_DEGREES, MODES, Chord, m
 ARCS = {
     "arch": [0.15, 0.45, 0.7, 0.65, 0.4, 0.1],  # rise, bloom, settle
     "descend": [0.5, 0.55, 0.45, 0.35, 0.2, 0.05],  # keeps sinking: good for deep sleep
+    "ease": [0.2, 0.4, 0.4, 0.3, 0.18, 0.05],  # like descend, but eases in so the first chord isn't the strongest
     "flat": [0.4, 0.45, 0.45, 0.45, 0.4, 0.3],
 }
 

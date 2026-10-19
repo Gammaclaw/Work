@@ -10,6 +10,20 @@ Feedback on renders, newest first. Each entry records:
 Any render can be recreated with
 `python -m sleepgen render styles/<style>.yaml --seed <seed> --minutes <length> --mp3`.
 
+## 2026-10-18: Moonlit Piano v2, softer opening
+
+- **Feedback on the 15-minute song (seed 21):** the opening chord felt too strong and the piano a bit
+  too loud. The ocean waves are very good; keep them.
+- **Why the opening was strong:** the `descend` arc starts at its fullest, and the arc only changes pad
+  brightness, not level, so the first chords arrived at full volume.
+- **Changes (Moonlit Piano only):** new `ease` arc; pads -2.5 dB with a 14 s attack; piano -6 dB
+  (was -4); new optional layer `intro` setting, here pads swell up from -10 dB and piano from -8 dB
+  over 90 s; master fade-in 30 s (was 15). Overall loudness stays -19 LUFS, so the waves sit a little
+  more forward.
+- **Result:** the opening now rises from about -28 dB to the usual -23 dB over the first minute,
+  with no early peak. File: `ocean-night-moonlit-piano_21_15m_v2-softer`.
+- Feedback: *pending*.
+
 ## 2026-10-14: Moonlit Piano chosen, first 15-minute render on the PC
 
 - **Pick:** the owner chose Moonlit Piano (`ocean_night_piano`) over Deep Drift and Whale Song.

@@ -5,9 +5,21 @@ description: >-
   Ocean Night's waves, pads and faint hum, with slow felt-piano phrases instead of the
   glass notes.
 
+# 2026-10-18 owner feedback: opening chord too strong, piano slightly too loud, ocean very good.
+arc: ease                 # starts soft instead of at its fullest
+
+pad:
+  gain_db: -2.5           # was 0 (from ocean_night)
+  attack: 14              # was 10: chords swell in more slowly
+  intro: {seconds: 90, from_db: -10}   # first chords start about 10 dB softer and grow over 90 s
+
+master:
+  fade_in: 30             # was 15
+
 melody:
   instrument: felt_piano
-  gain_db: -4
+  gain_db: -6             # was -4
+  intro: {seconds: 90, from_db: -8}
   range: [57, 81]
   density: 0.85
   velocity: 0.5

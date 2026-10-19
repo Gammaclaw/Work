@@ -199,6 +199,12 @@ def render_song(style: dict, minutes: float, seed: int, log=print) -> tuple[np.n
         if not np.isfinite(level):
             return
         bus *= 10 ** ((LAYER_REFERENCE_LUFS + float(cfg.get("gain_db", 0.0)) - level) / 20)
+        intro = cfg.get("intro")  # {seconds, from_db}: the layer swells up from from_db over its opening
+        if intro:
+            ni = min(n, int(float(intro.get("seconds", 60)) * sr))
+            floor = 10 ** (float(intro.get("from_db", -10)) / 20)
+            ramp = 0.5 - 0.5 * np.cos(np.linspace(0.0, np.pi, ni, dtype=np.float32))
+            bus[:ni] *= (floor + (1.0 - floor) * ramp)[:, None]
         np.add(dry, bus * float(cfg.get("dry", 1.0)), out=dry)
         np.add(send, bus * float(cfg.get("reverb_send", default_send)), out=send)
         log(f"  {name:<8} rendered ({time.time() - started:5.1f}s)")
