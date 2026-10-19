@@ -15,6 +15,7 @@ import soundfile as sf
 import yaml
 
 from .analyze import analyze
+from .longform import make_video, stitch
 from .song import load_style, render_song
 
 
@@ -72,6 +73,20 @@ def cmd_render(args: argparse.Namespace) -> None:
     print(f"done in {info['render_seconds']}s -> {wav}")
 
 
+def cmd_stitch(args: argparse.Namespace) -> None:
+    out = Path(args.out) if args.out else output_root() / "mixes" / f"{_slug(args.name)}.m4a"
+    tracks = stitch([Path(s) for s in args.songs], out, crossfade=args.crossfade)
+    print(f"done -> {out}\n" + out.with_suffix(".tracklist.txt").read_text(encoding="utf-8"), end="")
+    print(f"({len(tracks)} tracks; tracklist saved next to the mix)")
+
+
+def cmd_video(args: argparse.Namespace) -> None:
+    audio = Path(args.audio)
+    out = Path(args.out) if args.out else output_root() / "videos" / f"{audio.stem}.mp4"
+    make_video(audio, Path(args.visual), out, height=args.height)
+    print(f"done -> {out}")
+
+
 def cmd_analyze(args: argparse.Namespace) -> None:
     print(json.dumps(analyze(args.file, png=args.png), indent=2))
 
@@ -91,6 +106,20 @@ def main(argv: list[str] | None = None) -> None:
     r.add_argument("--mp3", action="store_true", help="also write an MP3 for easy listening")
     r.add_argument("--report", action="store_true", help="also write a loudness/spectrogram PNG")
     r.set_defaults(func=cmd_render)
+
+    s = sub.add_parser("stitch", help="crossfade songs into one long mix + YouTube tracklist")
+    s.add_argument("songs", nargs="+", help="song files in play order (WAV, FLAC or MP3)")
+    s.add_argument("--name", default="mix", help="mix name, used for the file name")
+    s.add_argument("--crossfade", type=float, default=15.0, help="seconds of overlap between songs (default 15)")
+    s.add_argument("--out", help="output file (default: $SLEEPGEN_OUTPUT/mixes/<name>.m4a)")
+    s.set_defaults(func=cmd_stitch)
+
+    v = sub.add_parser("video", help="put a mix on a looping picture or clip (1080p MP4)")
+    v.add_argument("audio", help="the mix from `stitch`")
+    v.add_argument("visual", help="a picture (PNG/JPG) or a seamless loop clip (MP4/MOV)")
+    v.add_argument("--height", type=int, default=1080)
+    v.add_argument("--out", help="output file (default: $SLEEPGEN_OUTPUT/videos/<mix>.mp4)")
+    v.set_defaults(func=cmd_video)
 
     a = sub.add_parser("analyze", help="loudness and spectrogram report for an audio file")
     a.add_argument("file")

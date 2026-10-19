@@ -52,5 +52,6 @@ GitHub repo is the sync point between them. See README.md for setup and the road
 | `sleepgen/textures.py` | Brown noise, ocean, rain, whale calls |
 | `sleepgen/effects.py` | Filters, echo, reverb, loudness, mastering |
 | `sleepgen/song.py` | Style + seed to a mixed, mastered song |
+| `sleepgen/longform.py` | Stitch songs into long mixes; loop a visual into a video |
 | `sleepgen/analyze.py` | Loudness and spectrogram report |
 | `sleepgen/__main__.py` | CLI |

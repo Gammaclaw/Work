@@ -59,7 +59,14 @@ on your phone. Pass `--out` to send a single render somewhere else.
 python -m sleepgen render STYLE.yaml [--minutes 15] [--seed N] [--mp3] [--report]
                                      [--set KEY=VALUE ...] [--tag LABEL] [--out DIR]
 python -m sleepgen analyze FILE.wav [--png picture.png]
+python -m sleepgen stitch SONG1 SONG2 ... [--name NAME] [--crossfade 15] [--out FILE]
+python -m sleepgen video MIX.m4a PICTURE_OR_LOOP [--height 1080] [--out FILE]
 ```
+
+- `stitch`: crossfades songs in order into one long AAC mix (`mixes/<name>.m4a`) and writes
+  `<name>.tracklist.txt` with YouTube chapter timestamps. Twelve 15-minute songs make about 2 h 57 min.
+- `video`: loops a still picture (encoded at 1 frame per second, so 3 hours stays small) or a
+  seamless clip under the mix and writes a 1080p MP4 to `videos/`.
 
 - `--seed`: the same seed always gives the same song. Leave it out to get a new song; the seed
   it used is printed and saved in the JSON.
@@ -123,8 +130,8 @@ The rules are calm by construction:
 1. **Done:** v0.1 engine with three test styles, 15-minute songs and analysis reports.
 2. Dial in the sound together (listen, give feedback, tweak), then lock 3–5 signature styles.
 3. Competitor research (VidIQ): which sub-niches, lengths, titles and thumbnails work.
-4. Long-form builder: string songs into 1–3 hour mixes with crossfades and chapter timestamps.
-5. Video: Higgsfield background art or a slow loop, rendered with ffmpeg into a YouTube-ready MP4.
+4. **Done (Oct 2026):** long-form builder: string songs into 1–3 hour mixes with crossfades and chapter timestamps.
+5. **Video command done**; still needed: the background art or slow loop itself.
 6. Richer instruments: real sampled piano and strings (free CC0 / CC-BY libraries), and/or
    [ACE-Step 1.5](https://github.com/ace-step/ACE-Step-1.5) (a local AI music model, MIT license, runs on Mac and PC).
 7. One command from style to finished video, plus batch and scheduled runs.

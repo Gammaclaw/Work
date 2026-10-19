@@ -1,4 +1,5 @@
 """Quick end-to-end check: every style renders clean, at the right loudness, repeatably."""
+import shutil
 from pathlib import Path
 
 import numpy as np
@@ -56,3 +57,21 @@ def test_adding_a_part_leaves_the_rest_untouched():
     b, _, info_b = render_song(take, minutes=0.5, seed=3, log=lambda *_: None)
     assert info_a["chords"] == info_b["chords"]
     assert np.max(np.abs(a - b)) < 1e-4
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="needs FFmpeg")
+def test_stitch_overlaps_songs_and_lists_tracks(tmp_path):
+    import soundfile as sf
+    from sleepgen.longform import duration, stitch
+
+    sr = 48000
+    songs = []
+    for i in range(3):
+        path = tmp_path / f"song-{i}.wav"
+        sf.write(str(path), np.full((12 * sr, 2), 0.1 * (i + 1), dtype=np.float32), sr)
+        songs.append(path)
+    out = tmp_path / "mix.m4a"
+    tracks = stitch(songs, out, crossfade=2, log=lambda *_: None)
+    assert [t["start"] for t in tracks] == [0, 10, 20]
+    assert abs(duration(out) - 32) < 0.2
+    assert out.with_suffix(".tracklist.txt").read_text().splitlines()[1] == "0:10 Song 1"
